@@ -96,11 +96,11 @@ class Fraktal:
 
     def zoom_in(self, event):
         """přiblížení"""
-        self.zoom(factor=1)
+        self.zoom(factor=0.5)
 
     def zoom_out(self, event):
         """oddálení"""
-        self.zoom(factor=1)
+        self.zoom(factor=2)
 
     def zoom(self, factor):
         """funkce pro zoom out a zoom in"""
