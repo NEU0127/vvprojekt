@@ -19,6 +19,8 @@ Projekt se zaměřuje na vizualizaci fraktálů pomocí knihovny implementované
 
 - Generování fraktálů (Mandelbrot, Julia) na základě zadaného rozsahu a rozlišení
 - Nastavení maximálního počtu iterací
+- slidery pro možnost měnit parametr c u Julie
 - Zoomování pomocí kolečka myši
 - Slider pro nastavení počtu iterací
 - Výběr barevného schématu zobrazení
+- přibližování a oddalování pomocí tlačítek
