@@ -1,5 +1,5 @@
 import numpy as np
-from numba import jit
+from numba import njit, prange
 
 class Julia:
     """
@@ -29,24 +29,6 @@ class Julia:
         self.height = height
         self.max_iter = max_iter
         self.c = c
-    @staticmethod
-    @jit(nopython=True)
-    def _julia_calc(width, height, x_min, x_max, y_min, y_max, max_iter, c):
-        """
-        metoda pro výpočet Juliovy množiny.
-        """
-        result = np.zeros((height, width), dtype=np.int32)
-        for y in range(height):
-            zy = y_min + (y / height) * (y_max - y_min)
-            for x in range(width):
-                zx = x_min + (x / width) * (x_max - x_min)
-                z = complex(zx, zy)
-                iteration = 0
-                while abs(z) <= 2 and iteration < max_iter:
-                    z = z*z + c
-                    iteration += 1
-                result[y, x] = iteration
-        return result
 
     def generate(self) -> np.ndarray:
         """
@@ -59,3 +41,21 @@ class Julia:
             self.max_iter,
             self.c
         )
+    @staticmethod
+    @njit(parallel=True)
+    def _julia_calc(width, height, x_min, x_max, y_min, y_max, max_iter, c):
+        """
+        metoda pro výpočet Juliovy množiny.
+        """
+        result = np.zeros((height, width), dtype=np.int32)
+        for y in prange(height):
+            zy = y_min + (y / height) * (y_max - y_min)
+            for x in range(width):
+                zx = x_min + (x / width) * (x_max - x_min)
+                z = complex(zx, zy)
+                iteration = 0
+                while abs(z) <= 2 and iteration < max_iter:
+                    z = z * z + c
+                    iteration += 1
+                result[y, x] = iteration
+        return result

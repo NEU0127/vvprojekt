@@ -1,5 +1,5 @@
 import numpy as np
-from numba import jit
+from numba import njit, prange
 
 class Mandelbrot:
     """
@@ -28,14 +28,21 @@ Inicializuje parametry generování Mandelbrotovy množiny
         self.height = height
         self.max_iter = max_iter
 
+    def generate(self) -> np.ndarray:
+        return self._mandelbrot_calc(
+            self.width, self.height,
+            self.x_min, self.x_max,
+            self.y_min, self.y_max,
+            self.max_iter
+        )
     @staticmethod
-    @jit(nopython=True)
+    @njit(parallel=True)
     def _mandelbrot_calc(width, height, x_min, x_max, y_min, y_max, max_iter):
         """
         metoda pro výpočet Mandelbrotovy množiny
         """
         result = np.zeros((height, width), dtype=np.int32)
-        for y in range(height):
+        for y in prange(height):
             cy = y_min + (y / height) * (y_max - y_min)
             for x in range(width):
                 cx = x_min + (x / width) * (x_max - x_min)
@@ -47,15 +54,3 @@ Inicializuje parametry generování Mandelbrotovy množiny
                     iteration += 1
                 result[y, x] = iteration
         return result
-
-    def generate(self) -> np.ndarray:
-        """
-        generuje množinu jako 2D pole
-        """
-        return self._mandelbrot_calc(
-            self.width, self.height,
-            self.x_min, self.x_max,
-            self.y_min, self.y_max,
-            self.max_iter
-        )
-
